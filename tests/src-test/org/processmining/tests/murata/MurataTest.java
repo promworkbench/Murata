@@ -23,7 +23,7 @@ public class MurataTest extends TestCase {
   }
   
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(UmaTest.class);
+    junit.textui.TestRunner.run(MurataTest.class);
   }
   
 }

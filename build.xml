@@ -6,7 +6,7 @@
 		<property name="lib" location="lib" />
 		<property name="dist" location="dist" />
 		<property name="release" location="latestrelease" />
-		<property name="version" value="1.0" />
+		<property name="version" value="6.1.0" />
 		<property name="project" value="Murata" />
 
 		<!-- Set the os to win32, win64, lin32, lin64, mac, or all -->
@@ -114,6 +114,25 @@
 				<copy todir="${release}/lib" overwrite="true">
 					<fileset dir="${lib}"/>
 				</copy>
+				<echoxml file="${release}/packages.xml">
+					<packages>
+						<package 
+							name="${project}" 
+							version="${version}" 
+							os="all" 
+							url="http://svn.win.tue.nl/repos/prom/Releases/Packages/${project}/${project}-${version}-${os}.zip"
+							desc="Murata"
+							org="Eindhoven University of Technology" 
+							license="LGPL" 
+							author="H.M.W. Verbeek"
+							auto="false"
+							hasPlugins="true"
+							logo="http://prom.win.tue.nl/ProM/packages/6.0/prom_subtitle_hat_300.png"
+						>
+							<dependency name="PetriNets"/>
+						</package>
+					</packages>
+				</echoxml>
 			</sequential>
 		</target>
 

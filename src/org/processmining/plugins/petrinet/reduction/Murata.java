@@ -35,7 +35,7 @@ public class Murata {
 	 * possible.
 	 */
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl")
-	@Plugin(name = "Petrinet reduction on marked Petri net", parameterLabels = { "Petri net", "Marking" }, returnLabels = {
+	@Plugin(name = "Reduce Silent Transitions in Marked Petri Net", parameterLabels = { "Petri net", "Marking" }, returnLabels = {
 			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true)
 	public Object[] run(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
@@ -50,6 +50,16 @@ public class Murata {
 		objects[0] = output.getNet();
 		objects[1] = output.getMarking();
 		return objects;
+	}
+
+	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl")
+	@Plugin(name = "Reduce All Transitions in Petri Net", parameterLabels = { "Petri net" }, returnLabels = {
+			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true)
+	public Petrinet run(final PluginContext context, final Petrinet net)
+			throws ConnectionCannotBeObtained {
+		MurataInput input = new MurataInput(net, new Marking());
+		MurataOutput output = run(context, input);
+		return output.getNet();
 	}
 
 	/**

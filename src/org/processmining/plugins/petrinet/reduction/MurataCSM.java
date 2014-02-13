@@ -104,10 +104,12 @@ public class MurataCSM extends MurataRule {
 			}
 		}
 		for (Place place : removePlaces) {
+			placeMap.put(place, firstPlace);
+		}
+		for (Place place : places) {
 			marking.add(firstPlace, marking.occurrences(place));
 			MurataUtils.updateLabel(firstPlace, marking);
 			MurataUtils.resetPlace(marking, place);
-			placeMap.put(place, firstPlace);
 		}
 		Set<PetrinetEdge<?, ?>> removeEdges = new HashSet<PetrinetEdge<?, ?>>();
 		Set<Transition> targetTransitions = new HashSet<Transition>();
@@ -139,14 +141,14 @@ public class MurataCSM extends MurataRule {
 		}
 		String result = "<csm place=\"" + firstPlace.getLabel() + "\" transitions=\"";
 		String sep = "{";
-		for (Transition transition : removeTransitions) {
+		for (Transition transition : transitions) {
 			result += sep + transition.getLabel();
 			sep = ",";
 			net.removeTransition(transition);
 		}
 		result += "}\" places=\"";
 		sep = "{";
-		for (Place place : removePlaces) {
+		for (Place place : places) {
 			result += sep + place.getLabel();
 			sep = ",";
 			net.removePlace(place);

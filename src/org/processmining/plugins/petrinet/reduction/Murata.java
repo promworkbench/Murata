@@ -127,6 +127,9 @@ public class Murata {
 		if (input.isAllowedRule(MurataInput.ELP)) {
 			reductionRules.add(new MurataESP());
 		}
+		if (input.isAllowedRule(MurataInput.CSM)) {
+			reductionRules.add(new MurataCSM());
+		}
 
 		/**
 		 * It is not clear how many reductions will take place. However, every

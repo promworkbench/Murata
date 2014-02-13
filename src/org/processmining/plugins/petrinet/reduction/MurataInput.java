@@ -39,6 +39,10 @@ public class MurataInput {
 	 * Bit mask for the Elimination of Self-Loop Places rule.
 	 */
 	static public final int ELP = 32;
+	/*
+	 * Bit mask for the Cyclic State Machine rule.
+	 */
+	static public final int CSM = 64;
 
 	/*
 	 * The Petri net to reduce.
@@ -68,7 +72,7 @@ public class MurataInput {
 	 */
 	public MurataInput(Petrinet net, Marking marking) {
 		sacredNodes = new HashSet<PetrinetNode>();
-		allowedRules = FST | FSP | FPT | FPP | ELT | ELP;
+		allowedRules = FST | FSP | FPT | FPP | ELT | ELP | CSM;
 		this.net = net;
 		this.marking = marking;
 	}

@@ -35,6 +35,7 @@ public class MurataASM extends MurataRule {
 			Set<Place> places = new HashSet<Place>();
 			places.add(sourcePlace);
 			String result = reduce(net, transitionMap, sourcePlace, places, sourcePlace, targetPlace, transition);
+			places.remove(sourcePlace);
 			if (result != null) {
 				return result;
 			}

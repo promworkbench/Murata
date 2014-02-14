@@ -17,6 +17,7 @@ public class MurataASM extends MurataRule {
 
 	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
 			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking) {
+		System.out.println("[MurataASM] Start");
 		for (Transition transition : net.getTransitions()) {
 			if (sacredNodes.contains(transition)) {
 				continue;
@@ -30,6 +31,7 @@ public class MurataASM extends MurataRule {
 			if (net.getOutEdges(transition).size() != 1) {
 				continue;
 			}
+			System.out.println("[MurataASM] Transition " + transition.getLabel());
 			Place sourcePlace = (Place) net.getInEdges(transition).iterator().next().getSource();
 			Place targetPlace = (Place) net.getOutEdges(transition).iterator().next().getTarget();
 			Set<Place> places = new HashSet<Place>();
@@ -37,9 +39,11 @@ public class MurataASM extends MurataRule {
 			String result = reduce(net, transitionMap, sourcePlace, places, sourcePlace, targetPlace, transition);
 			places.remove(sourcePlace);
 			if (result != null) {
+				System.out.println("[MurataASM] End");
 				return result;
 			}
 		}
+		System.out.println("[MurataASM] End");
 		return null;
 	}
 
@@ -63,8 +67,11 @@ public class MurataASM extends MurataRule {
 			if (places.contains(place)) {
 				continue;
 			}
-			if (currentPlace != firstPlace && place == lastPlace) {
-				return reduce(net, transitionMap, silentTransition);
+			if (place == lastPlace) {
+				if (currentPlace != firstPlace) {
+					return reduce(net, transitionMap, silentTransition);
+				}
+				continue;
 			}
 			places.add(place);
 			String result = reduce(net, transitionMap, place, places, firstPlace, lastPlace, silentTransition);

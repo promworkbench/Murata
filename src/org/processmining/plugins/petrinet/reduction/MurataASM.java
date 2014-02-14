@@ -78,6 +78,7 @@ public class MurataASM extends MurataRule {
 	
 	private String reduce(Petrinet net, HashMap<Transition, Transition> transitionMap, Transition removeTransition) {
 		Set<Transition> removeTransitions = new HashSet<Transition>();
+		System.out.println("[MurataASM] Remove " + removeTransition.getLabel() + ".");
 		for (Transition transition : transitionMap.keySet()) {
 			if (transitionMap.get(transition) == removeTransition) {
 				removeTransitions.add(transition);
@@ -86,6 +87,8 @@ public class MurataASM extends MurataRule {
 		for (Transition transition : removeTransitions) {
 			transitionMap.remove(transition);
 		}
+		net.removeEdge(net.getInEdges(removeTransition).iterator().next());
+		net.removeEdge(net.getOutEdges(removeTransition).iterator().next());
 		net.removeTransition(removeTransition);
 		return "<asm transition=\"" + removeTransition.getLabel() + "\"/>";
 	}

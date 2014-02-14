@@ -150,6 +150,9 @@ public class Murata {
 		if (input.isAllowedRule(MurataInput.CSM)) {
 			reductionRules.add(new MurataCSM());
 		}
+		if (input.isAllowedRule(MurataInput.ASM)) {
+			reductionRules.add(new MurataASM());
+		}
 
 		/**
 		 * It is not clear how many reductions will take place. However, every

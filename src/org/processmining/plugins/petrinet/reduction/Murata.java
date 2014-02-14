@@ -53,6 +53,26 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
+	@Plugin(name = "Simplify For Replay", parameterLabels = { "Petri net", "Marking" }, returnLabels = {
+			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true)
+	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking)
+			throws ConnectionCannotBeObtained {
+		/*
+		 * Create the set of sacred nodes. By default, every visible transition
+		 * will be sacred.
+		 */
+		MurataInput input = new MurataInput(net, marking);
+		input.setVisibleSacred(net);
+		input.allowRule(MurataInput.CSM);
+		input.allowRule(MurataInput.ASM);
+		MurataOutput output = run(context, input);
+		Object objects[] = new Object[2];
+		objects[0] = output.getNet();
+		objects[1] = output.getMarking();
+		return objects;
+	}
+
+	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Reduce All Transitions", parameterLabels = { "Petri net" }, returnLabels = {
 			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true)
 	public Petrinet run(final PluginContext context, final Petrinet net)

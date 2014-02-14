@@ -43,6 +43,10 @@ public class MurataInput {
 	 * Bit mask for the Cyclic State Machine rule.
 	 */
 	static public final int CSM = 64;
+	/*
+	 * Bit mask for the Alternative State Machine rule.
+	 */
+	static public final int ASM = 128;
 
 	/*
 	 * The Petri net to reduce.
@@ -72,7 +76,7 @@ public class MurataInput {
 	 */
 	public MurataInput(Petrinet net, Marking marking) {
 		sacredNodes = new HashSet<PetrinetNode>();
-		allowedRules = FST | FSP | FPT | FPP | ELT | ELP | CSM;
+		allowedRules = FST | FSP | FPT | FPP | ELT | ELP;
 		this.net = net;
 		this.marking = marking;
 	}

@@ -33,24 +33,26 @@ public class BerthelotPlugin {
 	@PluginVariant(variantLabel = "Remove Structural Redundant Places, Default", requiredParameterLabels = { 0 })
 	public Petrinet reduceDefault(PluginContext context, Petrinet net) {
 		BerthelotParameters parameters = new BerthelotParameters();
-		try {
-			Collection<InitialMarkingConnection> connections = context.getConnectionManager().getConnections(
-					InitialMarkingConnection.class, context, net);
-			if (connections.size() == 1) {
-				parameters.setInitialMarking((Marking) connections.iterator().next()
-						.getObjectWithRole(InitialMarkingConnection.MARKING));
+		if (context != null) {
+			try {
+				Collection<InitialMarkingConnection> connections = context.getConnectionManager().getConnections(
+						InitialMarkingConnection.class, context, net);
+				if (connections.size() == 1) {
+					parameters.setInitialMarking((Marking) connections.iterator().next()
+							.getObjectWithRole(InitialMarkingConnection.MARKING));
+				}
+			} catch (ConnectionCannotBeObtained e) {
 			}
-		} catch (ConnectionCannotBeObtained e) {
-		}
-		try {
-			Collection<FinalMarkingConnection> connections = context.getConnectionManager().getConnections(
-					FinalMarkingConnection.class, context, net);
-			Set<Marking> finalMarkings = new HashSet<Marking>();
-			for (FinalMarkingConnection connection : connections) {
-				finalMarkings.add((Marking) connection.getObjectWithRole(FinalMarkingConnection.MARKING));
+			try {
+				Collection<FinalMarkingConnection> connections = context.getConnectionManager().getConnections(
+						FinalMarkingConnection.class, context, net);
+				Set<Marking> finalMarkings = new HashSet<Marking>();
+				for (FinalMarkingConnection connection : connections) {
+					finalMarkings.add((Marking) connection.getObjectWithRole(FinalMarkingConnection.MARKING));
+				}
+				parameters.setFinalMarkings(finalMarkings);
+			} catch (ConnectionCannotBeObtained e) {
 			}
-			parameters.setFinalMarkings(finalMarkings);
-		} catch (ConnectionCannotBeObtained e) {
 		}
 		return reduceParameters(context, net, parameters);
 	}
@@ -231,9 +233,11 @@ public class BerthelotPlugin {
 
 		parameters.setInitialBerthelotMarking(initialMarking);
 		parameters.setFinalBerthelotMarkings(finalMarkings);
-		context.getConnectionManager().addConnection(new InitialMarkingConnection(reducedPN, initialMarking));
-		for (Marking finalMarking : finalMarkings) {
-			context.getConnectionManager().addConnection(new FinalMarkingConnection(reducedPN, finalMarking));
+		if (context != null) {
+			context.getConnectionManager().addConnection(new InitialMarkingConnection(reducedPN, initialMarking));
+			for (Marking finalMarking : finalMarkings) {
+				context.getConnectionManager().addConnection(new FinalMarkingConnection(reducedPN, finalMarking));
+			}
 		}
 		return reducedPN;
 	}

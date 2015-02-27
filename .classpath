@@ -42,5 +42,6 @@
 	<classpathentry kind="lib" path="tests/libs-external/junit-4.8.1.jar"/>
 	<classpathentry kind="lib" path="packagelib/PetriNets.jar"/>
 	<classpathentry kind="lib" path="packagelib/LPEngine.jar"/>
+	<classpathentry kind="lib" path="stdlib/guava-16.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

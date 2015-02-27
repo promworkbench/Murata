@@ -82,6 +82,30 @@ public class Murata {
 		return output.getNet();
 	}
 
+	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
+	@Plugin(name = "Reduce All Transitions, Retain Sink/Source Places", parameterLabels = { "Petri net" }, returnLabels = {
+			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true)
+	public Petrinet runWF(final PluginContext context, final Petrinet net)
+			throws ConnectionCannotBeObtained {
+		MurataInput input = new MurataInput(net, new Marking());
+		for (Place place : net.getPlaces()) {
+			if (net.getInEdges(place).isEmpty()) {
+				input.addSacred(place);
+				if (!net.getOutEdges(place).isEmpty()) {
+					input.addSacred(net.getOutEdges(place).iterator().next().getTarget());
+				}
+			}
+			if (net.getOutEdges(place).isEmpty()) {
+				input.addSacred(place);
+				if (!net.getInEdges(place).isEmpty()) {
+					input.addSacred(net.getInEdges(place).iterator().next().getSource());
+				}
+			}
+		}
+		MurataOutput output = run(context, input);
+		return output.getNet();
+	}
+
 	/**
 	 * Apply the Murata reduction rules until no further reductions are
 	 * possible.

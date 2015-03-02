@@ -43,5 +43,6 @@
 	<classpathentry kind="lib" path="packagelib/PetriNets.jar"/>
 	<classpathentry kind="lib" path="packagelib/LPEngine.jar"/>
 	<classpathentry kind="lib" path="stdlib/guava-16.0.1.jar"/>
+	<classpathentry kind="lib" path="packagelib/BasicUtils.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

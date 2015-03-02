@@ -3,9 +3,10 @@ package org.processmining.parameters;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.processmining.basicutils.parameters.impl.PluginParametersImpl;
 import org.processmining.models.semantics.petrinet.Marking;
 
-public class BerthelotParameters {
+public class BerthelotParameters extends PluginParametersImpl {
 
 	private Marking initialMarking;
 	private Set<Marking> finalMarkings;
@@ -13,10 +14,19 @@ public class BerthelotParameters {
 	private Set<Marking> finalBerthelotMarkings;
 	
 	public BerthelotParameters() {
+		super();
 		setInitialMarking(new Marking());
 		setFinalMarkings(new HashSet<Marking>());
 		setInitialBerthelotMarking(null);
 		setFinalBerthelotMarkings(null);
+	}
+	
+	public BerthelotParameters(BerthelotParameters parameters) {
+		super(parameters);
+		setInitialMarking(parameters.getInitialMarking());
+		setFinalMarkings(parameters.getFinalMarkings());
+		setInitialBerthelotMarking(parameters.getInitialBerthelotMarking());
+		setFinalBerthelotMarkings(parameters.getFinalBerthelotMarkings());
 	}
 	
 	public Marking getInitialMarking() {

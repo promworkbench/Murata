@@ -1,10 +1,8 @@
 package org.processmining.tests.murata;
+import junit.framework.TestCase;
+
 import org.junit.Test;
 import org.processmining.contexts.cli.CLI;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
 
 public class MurataTest extends TestCase {
 

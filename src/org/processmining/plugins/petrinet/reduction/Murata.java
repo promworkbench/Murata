@@ -10,6 +10,7 @@ import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.annotations.Plugin;
+import org.processmining.help.MurataHelp;
 import org.processmining.models.connections.petrinets.PetrinetGraphConnection;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
@@ -36,7 +37,7 @@ public class Murata {
 	 */
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Reduce Silent Transitions", parameterLabels = { "Petri net", "Marking" }, returnLabels = {
-			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true)
+			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Object[] run(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
 		/*
@@ -54,7 +55,7 @@ public class Murata {
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Simplify For Replay", parameterLabels = { "Petri net", "Marking" }, returnLabels = {
-			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true)
+			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
 		/*
@@ -74,7 +75,7 @@ public class Murata {
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Reduce All Transitions", parameterLabels = { "Petri net" }, returnLabels = {
-			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true)
+			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Petrinet run(final PluginContext context, final Petrinet net)
 			throws ConnectionCannotBeObtained {
 		MurataInput input = new MurataInput(net, new Marking());
@@ -84,7 +85,7 @@ public class Murata {
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Reduce All Transitions, Retain Sink/Source Places", parameterLabels = { "Petri net" }, returnLabels = {
-			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true)
+			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Petrinet runWF(final PluginContext context, final Petrinet net)
 			throws ConnectionCannotBeObtained {
 		MurataInput input = new MurataInput(net, new Marking());

@@ -11,13 +11,14 @@ import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.framework.plugin.annotations.PluginVariant;
+import org.processmining.help.BerthelotHelp;
 import org.processmining.models.connections.petrinets.behavioral.FinalMarkingConnection;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.parameters.BerthelotParameters;
 
-@Plugin(name = "Remove Structural Redundant Places from Petri Net", parameterLabels = { "Petri Net", "Parameters" }, returnLabels = { "Petri Net" }, returnTypes = { Petrinet.class })
+@Plugin(name = "Remove Structural Redundant Places from Petri Net", parameterLabels = { "Petri Net", "Parameters" }, returnLabels = { "Petri Net" }, returnTypes = { Petrinet.class }, help = BerthelotHelp.TEXT)
 public class BerthelotPlugin extends BerthelotAlgorithm {
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W. Verbeek", email = "h.m.w.verbeek@tue.nl")

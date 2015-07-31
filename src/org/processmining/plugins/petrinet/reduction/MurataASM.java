@@ -17,6 +17,11 @@ public class MurataASM extends MurataRule {
 
 	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
 			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking) {
+		return reduce(net, sacredNodes, transitionMap, placeMap, marking, new MurataParameters());
+	}
+	
+	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking, MurataParameters parameters) {
 //		System.out.println("[MurataASM] Start");
 		for (Transition transition : net.getTransitions()) {
 			if (sacredNodes.contains(transition)) {

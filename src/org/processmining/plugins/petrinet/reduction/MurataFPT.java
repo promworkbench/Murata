@@ -16,6 +16,12 @@ public class MurataFPT extends MurataRule {
 
 	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
 			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking) {
+		return reduce(net, sacredNodes, transitionMap, placeMap, marking, new MurataParameters());
+	}
+
+	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking,
+			MurataParameters parameters) {
 		HashMap<Transition, HashSet<Arc>> inputMap = new HashMap<Transition, HashSet<Arc>>();
 		HashMap<Transition, HashSet<Arc>> outputMap = new HashMap<Transition, HashSet<Arc>>();
 		/*
@@ -118,18 +124,20 @@ public class MurataFPT extends MurataRule {
 					 * either the sibling or the transition.
 					 */
 					if (!sacredNodes.contains(siblingTransition)) {
-						String log = "<fpt siblingTransition=\"" + siblingTransition.getLabel() + "\"/>";
-						/*
-						 * The sibling is not sacred. Remove it. First, update
-						 * the transition map.
-						 */
-						for (Transition t : transitionMap.keySet()) {
-							if (transitionMap.get(t) == siblingTransition) {
-								transitionMap.put(t, transition);
+						if (parameters.isAllowFPTSacredNode() || !sacredNodes.contains(transition)) {
+							String log = "<fpt siblingTransition=\"" + siblingTransition.getLabel() + "\"/>";
+							/*
+							 * The sibling is not sacred. Remove it. First,
+							 * update the transition map.
+							 */
+							for (Transition t : transitionMap.keySet()) {
+								if (transitionMap.get(t) == siblingTransition) {
+									transitionMap.put(t, transition);
+								}
+								net.removeTransition(siblingTransition);
 							}
-							net.removeTransition(siblingTransition);
+							return log; // The sibling has been removed.
 						}
-						return log; // The sibling has been removed.
 					} else if (!sacredNodes.contains(transition)) {
 						String log = "<fpt transition=\"" + transition.getLabel() + "\"/>";
 						/*

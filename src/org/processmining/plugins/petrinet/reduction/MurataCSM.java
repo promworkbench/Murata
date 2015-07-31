@@ -18,6 +18,11 @@ public class MurataCSM extends MurataRule {
 
 	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
 			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking) {
+		return reduce(net, sacredNodes, transitionMap, placeMap, marking, new MurataParameters());
+	}
+	
+	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking, MurataParameters parameters) {
 		for (Place place : net.getPlaces()) {
 			Set<Place> places = new HashSet<Place>();
 			Set<Transition> transitions = new HashSet<Transition>();

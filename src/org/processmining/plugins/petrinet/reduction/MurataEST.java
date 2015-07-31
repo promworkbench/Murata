@@ -16,6 +16,11 @@ public class MurataEST extends MurataRule {
 
 	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
 			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking) {
+		return reduce(net, sacredNodes, transitionMap, placeMap, marking, new MurataParameters());
+	}
+	
+	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking, MurataParameters parameters) {
 		/*
 		 * Iterate over all transitions.
 		 */

@@ -40,13 +40,18 @@ public class Murata {
 			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Object[] run(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
+		return run(context, net, marking, new MurataParameters());
+	}
+	
+	public Object[] run(final PluginContext context, final Petrinet net, final Marking marking, MurataParameters parameters)
+			throws ConnectionCannotBeObtained {
 		/*
 		 * Create the set of sacred nodes. By default, every visible transition
 		 * will be sacred.
 		 */
 		MurataInput input = new MurataInput(net, marking);
 		input.setVisibleSacred(net);
-		MurataOutput output = run(context, input);
+		MurataOutput output = run(context, input, parameters);
 		Object objects[] = new Object[2];
 		objects[0] = output.getNet();
 		objects[1] = output.getMarking();
@@ -58,6 +63,11 @@ public class Murata {
 			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
+		return simplify(context, net, marking, new MurataParameters());
+	}
+	
+	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking, MurataParameters parameters)
+			throws ConnectionCannotBeObtained {
 		/*
 		 * Create the set of sacred nodes. By default, every visible transition
 		 * will be sacred.
@@ -66,7 +76,7 @@ public class Murata {
 		input.setVisibleSacred(net);
 		input.allowRule(MurataInput.CSM);
 		input.allowRule(MurataInput.ASM);
-		MurataOutput output = run(context, input);
+		MurataOutput output = run(context, input, parameters);
 		Object objects[] = new Object[2];
 		objects[0] = output.getNet();
 		objects[1] = output.getMarking();
@@ -78,6 +88,11 @@ public class Murata {
 			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Petrinet run(final PluginContext context, final Petrinet net)
 			throws ConnectionCannotBeObtained {
+		return run(context, net, new MurataParameters());
+	}
+	
+	public Petrinet run(final PluginContext context, final Petrinet net, MurataParameters parameters)
+			throws ConnectionCannotBeObtained {
 		MurataInput input = new MurataInput(net, new Marking());
 		MurataOutput output = run(context, input);
 		return output.getNet();
@@ -87,6 +102,11 @@ public class Murata {
 	@Plugin(name = "Reduce All Transitions, Retain Sink/Source Places", parameterLabels = { "Petri net" }, returnLabels = {
 			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Petrinet runWF(final PluginContext context, final Petrinet net)
+			throws ConnectionCannotBeObtained {
+		return runWF(context, net, new MurataParameters());
+	}
+	
+	public Petrinet runWF(final PluginContext context, final Petrinet net, MurataParameters parameters)
 			throws ConnectionCannotBeObtained {
 		MurataInput input = new MurataInput(net, new Marking());
 		for (Place place : net.getPlaces()) {
@@ -103,7 +123,7 @@ public class Murata {
 				}
 			}
 		}
-		MurataOutput output = run(context, input);
+		MurataOutput output = run(context, input, parameters);
 		return output.getNet();
 	}
 
@@ -112,6 +132,10 @@ public class Murata {
 	 * possible.
 	 */
 	public MurataOutput run(final PluginContext context, final MurataInput input) throws ConnectionCannotBeObtained {
+		return run(context, input, new MurataParameters());
+	}
+	
+	public MurataOutput run(final PluginContext context, final MurataInput input, MurataParameters parameters) throws ConnectionCannotBeObtained {
 		/*
 		 * See if a proper connection exists between the net and the marking.
 		 */
@@ -202,7 +226,7 @@ public class Murata {
 			log = null;
 			for (MurataRule reductionRule : reductionRules) {
 				if (log == null) {
-					log = reductionRule.reduce(net, sacredNodes, transitionMap, placeMap, marking);
+					log = reductionRule.reduce(net, sacredNodes, transitionMap, placeMap, marking, parameters);
 				}
 			}
 			if (log != null) {

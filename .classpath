@@ -40,9 +40,7 @@
 	<classpathentry kind="lib" path="tests/libs-external/lib-cobertura/log4j-1.2.9.jar"/>
 	<classpathentry kind="lib" path="tests/libs-external/cobertura.jar"/>
 	<classpathentry kind="lib" path="tests/libs-external/junit-4.8.1.jar"/>
-	<classpathentry kind="lib" path="packagelib/PetriNets.jar"/>
-	<classpathentry kind="lib" path="packagelib/LPEngine.jar"/>
 	<classpathentry kind="lib" path="stdlib/guava-16.0.1.jar"/>
-	<classpathentry kind="lib" path="packagelib/BasicUtils.jar"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=Murata&amp;ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=ivysettings.xml&amp;loadSettingsOnDemand=false&amp;ivyUserDir=&amp;propertyFiles="/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

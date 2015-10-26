@@ -10,6 +10,7 @@ import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.annotations.Plugin;
+import org.processmining.framework.plugin.annotations.PluginVariant;
 import org.processmining.help.MurataHelp;
 import org.processmining.models.connections.petrinets.PetrinetGraphConnection;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
@@ -29,6 +30,8 @@ import org.processmining.models.semantics.petrinet.Marking;
  * @version 0.1
  */
 
+@Plugin(name = "Reduce Silent Transitions", parameterLabels = { "Petri net", "Marking" }, returnLabels = {
+		"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 public class Murata {
 
 	/**
@@ -36,8 +39,7 @@ public class Murata {
 	 * possible.
 	 */
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Reduce Silent Transitions", parameterLabels = { "Petri net", "Marking" }, returnLabels = {
-			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
+	@PluginVariant(variantLabel = "Default", requiredParameterLabels = { 0, 1 })
 	public Object[] run(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
 		return run(context, net, marking, new MurataParameters());

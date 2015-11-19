@@ -37,6 +37,9 @@ public class BerthelotAlgorithm {
 		 */
 		Set<Place> redundantPlaces = new HashSet<Place>();
 		for (Place candidatePlace : reducedPN.getPlaces()) {
+			if (fastCheckFails(reducedPN, candidatePlace)) {
+				continue;
+			}
 			/*
 			 * Checking whether candidatePlace is structurally redundant. First
 			 * create LPEngine, with a variable for every place and one
@@ -243,5 +246,21 @@ public class BerthelotAlgorithm {
 			appliedMarkings.add(apply(marking, map));
 		}
 		return appliedMarkings;
+	}
+	
+	private boolean fastCheckFails(Petrinet net, Place place) {
+		for (PetrinetEdge<?, ?> outEdge : net.getOutEdges(place)) {
+			if (outEdge instanceof Arc) {
+				Arc outArc = (Arc) outEdge;
+				if (net.getInEdges(outArc.getTarget()).size() == 1) {
+					/*
+					 * One of the transitions in the postset of this place has only this place as input.
+					 * As a result, this place cannot be structurally redundant.
+					 */
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

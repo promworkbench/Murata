@@ -253,11 +253,29 @@ public class BerthelotAlgorithm {
 			if (outEdge instanceof Arc) {
 				Arc outArc = (Arc) outEdge;
 				if (net.getInEdges(outArc.getTarget()).size() == 1) {
-					/*
-					 * One of the transitions in the postset of this place has only this place as input.
-					 * As a result, this place cannot be structurally redundant.
-					 */
-					return true;
+					for (PetrinetEdge<?,?> outOutEdge : net.getOutEdges(outArc.getTarget())) {
+						if (outOutEdge instanceof Arc) {
+							Arc outOutArc = (Arc) outOutEdge;
+							if (!outOutArc.getTarget().equals(place)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		for (PetrinetEdge<?, ?> inEdge : net.getInEdges(place)) {
+			if (inEdge instanceof Arc) {
+				Arc inArc = (Arc) inEdge;
+				if (net.getInEdges(inArc.getSource()).size() == 1) {
+					for (PetrinetEdge<?,?> inInEdge : net.getInEdges(inArc.getSource())) {
+						if (inInEdge instanceof Arc) {
+							Arc inInArc = (Arc) inInEdge;
+							if (!inInArc.getSource().equals(place)) {
+								return true;
+							}
+						}
+					}
 				}
 			}
 		}

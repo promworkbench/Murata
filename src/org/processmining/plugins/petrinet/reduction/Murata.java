@@ -10,6 +10,7 @@ import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.annotations.Plugin;
+import org.processmining.framework.plugin.annotations.PluginLevel;
 import org.processmining.framework.plugin.annotations.PluginVariant;
 import org.processmining.help.MurataHelp;
 import org.processmining.models.connections.petrinets.PetrinetGraphConnection;
@@ -30,7 +31,7 @@ import org.processmining.models.semantics.petrinet.Marking;
  * @version 0.1
  */
 
-@Plugin(name = "Reduce Silent Transitions", parameterLabels = { "Petri net", "Marking" }, returnLabels = {
+@Plugin(name = "Reduce Silent Transitions", level = PluginLevel.PeerReviewed, parameterLabels = { "Petri net", "Marking" }, returnLabels = {
 		"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 public class Murata {
 
@@ -86,7 +87,7 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Reduce All Transitions", parameterLabels = { "Petri net" }, returnLabels = {
+	@Plugin(name = "Reduce All Transitions", level = PluginLevel.PeerReviewed, parameterLabels = { "Petri net" }, returnLabels = {
 			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Petrinet run(final PluginContext context, final Petrinet net)
 			throws ConnectionCannotBeObtained {
@@ -101,7 +102,7 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Reduce All Transitions, Retain Sink/Source Places", parameterLabels = { "Petri net" }, returnLabels = {
+	@Plugin(name = "Reduce All Transitions, Retain Sink/Source Places", level = PluginLevel.PeerReviewed, parameterLabels = { "Petri net" }, returnLabels = {
 			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Petrinet runWF(final PluginContext context, final Petrinet net)
 			throws ConnectionCannotBeObtained {

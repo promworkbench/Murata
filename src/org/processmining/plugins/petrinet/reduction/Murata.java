@@ -12,6 +12,7 @@ import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.framework.plugin.annotations.PluginLevel;
 import org.processmining.framework.plugin.annotations.PluginVariant;
+import org.processmining.framework.plugin.events.Logger.MessageLevel;
 import org.processmining.help.MurataHelp;
 import org.processmining.models.connections.petrinets.PetrinetGraphConnection;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
@@ -142,10 +143,10 @@ public class Murata {
 		/*
 		 * See if a proper connection exists between the net and the marking.
 		 */
-		if (context != null) {
-			context.getConnectionManager().getFirstConnection(InitialMarkingConnection.class, context, input.getNet(),
-					input.getMarking());
-		}
+//		if (context != null) {
+//			context.getConnectionManager().getFirstConnection(InitialMarkingConnection.class, context, input.getNet(),
+//					input.getMarking());
+//		}
 		/*
 		 * Yes, it exists. From here, we can ignore it (it's empty any way, the
 		 * fact that it exists has value, not the thing itself).
@@ -158,6 +159,9 @@ public class Murata {
 		HashMap<Place, Place> placeMap = new HashMap<Place, Place>();
 		final Petrinet net = copyPetrinet(input.getNet(), transitionMap, placeMap);
 		Marking marking = copyMarking(input.getMarking(), placeMap);
+		if (marking.isEmpty() && !input.getMarking().isEmpty()) {
+			context.log("Petri net and marking are not related. Assuming empty initial marking.", MessageLevel.WARNING);
+		}
 		if (context != null) {
 			context.getFutureResult(0).setLabel(net.getLabel());
 		}

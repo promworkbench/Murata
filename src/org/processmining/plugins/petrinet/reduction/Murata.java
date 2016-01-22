@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.swing.JOptionPane;
+
+import org.processmining.contexts.uitopia.UIPluginContext;
 import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
@@ -32,8 +35,9 @@ import org.processmining.models.semantics.petrinet.Marking;
  * @version 0.1
  */
 
-@Plugin(name = "Reduce Silent Transitions", level = PluginLevel.PeerReviewed, parameterLabels = { "Petri net", "Marking" }, returnLabels = {
-		"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
+@Plugin(name = "Reduce Silent Transitions", level = PluginLevel.PeerReviewed, parameterLabels = { "Petri net",
+		"Marking" }, returnLabels = { "Petri net", "Marking" }, returnTypes = { Petrinet.class,
+				Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 public class Murata {
 
 	/**
@@ -46,9 +50,9 @@ public class Murata {
 			throws ConnectionCannotBeObtained {
 		return run(context, net, marking, new MurataParameters());
 	}
-	
-	public Object[] run(final PluginContext context, final Petrinet net, final Marking marking, MurataParameters parameters)
-			throws ConnectionCannotBeObtained {
+
+	public Object[] run(final PluginContext context, final Petrinet net, final Marking marking,
+			MurataParameters parameters) throws ConnectionCannotBeObtained {
 		/*
 		 * Create the set of sacred nodes. By default, every visible transition
 		 * will be sacred.
@@ -63,15 +67,15 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Simplify For Replay", parameterLabels = { "Petri net", "Marking" }, returnLabels = {
-			"Petri net", "Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
+	@Plugin(name = "Simplify For Replay", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
+			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
 		return simplify(context, net, marking, new MurataParameters());
 	}
-	
-	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking, MurataParameters parameters)
-			throws ConnectionCannotBeObtained {
+
+	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking,
+			MurataParameters parameters) throws ConnectionCannotBeObtained {
 		/*
 		 * Create the set of sacred nodes. By default, every visible transition
 		 * will be sacred.
@@ -88,13 +92,13 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Reduce All Transitions", level = PluginLevel.PeerReviewed, parameterLabels = { "Petri net" }, returnLabels = {
-			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
-	public Petrinet run(final PluginContext context, final Petrinet net)
-			throws ConnectionCannotBeObtained {
+	@Plugin(name = "Reduce All Transitions", level = PluginLevel.PeerReviewed, parameterLabels = {
+			"Petri net" }, returnLabels = { "Petri net" }, returnTypes = {
+					Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
+	public Petrinet run(final PluginContext context, final Petrinet net) throws ConnectionCannotBeObtained {
 		return run(context, net, new MurataParameters());
 	}
-	
+
 	public Petrinet run(final PluginContext context, final Petrinet net, MurataParameters parameters)
 			throws ConnectionCannotBeObtained {
 		MurataInput input = new MurataInput(net, new Marking());
@@ -103,13 +107,13 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Reduce All Transitions, Retain Sink/Source Places", level = PluginLevel.PeerReviewed, parameterLabels = { "Petri net" }, returnLabels = {
-			"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
-	public Petrinet runWF(final PluginContext context, final Petrinet net)
-			throws ConnectionCannotBeObtained {
+	@Plugin(name = "Reduce All Transitions, Retain Sink/Source Places", level = PluginLevel.PeerReviewed, parameterLabels = {
+			"Petri net" }, returnLabels = { "Petri net" }, returnTypes = {
+					Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
+	public Petrinet runWF(final PluginContext context, final Petrinet net) throws ConnectionCannotBeObtained {
 		return runWF(context, net, new MurataParameters());
 	}
-	
+
 	public Petrinet runWF(final PluginContext context, final Petrinet net, MurataParameters parameters)
 			throws ConnectionCannotBeObtained {
 		MurataInput input = new MurataInput(net, new Marking());
@@ -138,15 +142,16 @@ public class Murata {
 	public MurataOutput run(final PluginContext context, final MurataInput input) throws ConnectionCannotBeObtained {
 		return run(context, input, new MurataParameters());
 	}
-	
-	public MurataOutput run(final PluginContext context, final MurataInput input, MurataParameters parameters) throws ConnectionCannotBeObtained {
+
+	public MurataOutput run(final PluginContext context, final MurataInput input, MurataParameters parameters)
+			throws ConnectionCannotBeObtained {
 		/*
 		 * See if a proper connection exists between the net and the marking.
 		 */
-//		if (context != null) {
-//			context.getConnectionManager().getFirstConnection(InitialMarkingConnection.class, context, input.getNet(),
-//					input.getMarking());
-//		}
+		//		if (context != null) {
+		//			context.getConnectionManager().getFirstConnection(InitialMarkingConnection.class, context, input.getNet(),
+		//					input.getMarking());
+		//		}
 		/*
 		 * Yes, it exists. From here, we can ignore it (it's empty any way, the
 		 * fact that it exists has value, not the thing itself).
@@ -161,6 +166,10 @@ public class Murata {
 		Marking marking = copyMarking(input.getMarking(), placeMap);
 		if (marking.isEmpty() && !input.getMarking().isEmpty()) {
 			context.log("Petri net and marking are not related. Assuming empty initial marking.", MessageLevel.WARNING);
+			if (context instanceof UIPluginContext) {
+				JOptionPane.showMessageDialog(null,
+						"Petri net and marking are not related. Assuming empty initial marking.");
+			}
 		}
 		if (context != null) {
 			context.getFutureResult(0).setLabel(net.getLabel());
@@ -372,10 +381,12 @@ public class Murata {
 		Iterator<Place> placeIterator = marking.iterator();
 		while (placeIterator.hasNext()) {
 			Place place = placeIterator.next();
-			/*
-			 * Add to the copy marking.
-			 */
-			copyMarking.add(placeMap.get(place), marking.occurrences(place));
+			if (placeMap.containsKey(place)) {
+				/*
+				 * Add to the copy marking.
+				 */
+				copyMarking.add(placeMap.get(place), marking.occurrences(place));
+			}
 		}
 		return copyMarking;
 	}

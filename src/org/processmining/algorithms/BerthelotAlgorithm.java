@@ -31,20 +31,61 @@ public class BerthelotAlgorithm {
 		Set<Marking> finalMarkings = apply(parameters.getFinalMarkings(), placeMap);
 
 		/*
+		 * Construct easy-lookup for arc weights.
+		 */
+		Map<Place, Integer> pMap = new HashMap<Place, Integer>();
+		int ctr = 0;
+		for (Place place : reducedPN.getPlaces()) {
+			pMap.put(place,  ctr);
+			ctr++;
+		}
+		Map<Transition, Integer> tMap = new HashMap<Transition, Integer>();
+		ctr = 0;
+		for (Transition transition : reducedPN.getTransitions()) {
+			tMap.put(transition,  ctr);
+			ctr++;
+		}
+		int[][] ptWeights = new int[reducedPN.getPlaces().size()][reducedPN.getTransitions().size()];
+		for (int p = reducedPN.getPlaces().size() - 1; p >= 0; p--) {
+			for (int t = reducedPN.getTransitions().size() - 1; t >= 0; t--) {
+				ptWeights[p][t] = 0;
+			}
+		}
+		int[][] tpWeights = new int[reducedPN.getTransitions().size()][reducedPN.getPlaces().size()];
+		for (int t = reducedPN.getTransitions().size() - 1; t >= 0; t--) {
+			for (int p = reducedPN.getPlaces().size() - 1; p >= 0; p--) {
+				tpWeights[t][p] = 0;
+			}
+		}
+		for (PetrinetEdge<?, ?> edge : reducedPN.getEdges()) {
+			if (edge instanceof Arc) {
+				Arc arc = (Arc) edge;
+				if (arc.getSource() instanceof Place) {
+					ptWeights[pMap.get(arc.getSource())][tMap.get(arc.getTarget())] = arc.getWeight();
+				} else {
+					tpWeights[tMap.get(arc.getSource())][pMap.get(arc.getTarget())] = arc.getWeight();
+				}
+			}
+		}
+		
+		/*
 		 * redudantPlaces holds the set of redundant places found so far. These
 		 * places will be ignored when checking whether the candidate place is
 		 * redundant.
 		 */
 		Set<Place> redundantPlaces = new HashSet<Place>();
 		for (Place candidatePlace : reducedPN.getPlaces()) {
+			parameters.displayMessage("[BerthelotAlgorithm] Place " + candidatePlace.getLabel());
 			if (fastCheckFails(reducedPN, candidatePlace)) {
 				continue;
 			}
+
 			/*
 			 * Checking whether candidatePlace is structurally redundant. First
 			 * create LPEngine, with a variable for every place and one
 			 * additional variable for the initial marking.
 			 */
+			parameters.displayMessage("[BerthelotAlgorithm] Create engine");
 			Map<Place, Integer> placeIndex = new HashMap<Place, Integer>();
 			int mIndex;
 			LPEngine engine = LPEngineFactory.createLPEngine(EngineType.LPSOLVE, 0, 0);
@@ -69,6 +110,7 @@ public class BerthelotAlgorithm {
 			 * 
 			 * V(p).M0(p) - Sum_{q in Q}{V(q).M0(q) - bM0 = 0
 			 */
+			parameters.displayMessage("[BerthelotAlgorithm] First constraint");
 			Map<Integer, Double> constraint = new HashMap<Integer, Double>();
 			for (Place place : reducedPN.getPlaces()) {
 				if (!redundantPlaces.contains(place)) {
@@ -91,12 +133,13 @@ public class BerthelotAlgorithm {
 			 * 
 			 * For all t in T: V(p).W(p,t) - Sum_{q in Q}{V(q).W(q.t) - bM0 <= 0
 			 */
+			parameters.displayMessage("[BerthelotAlgorithm] Second constraint");
 			for (Transition transition : reducedPN.getTransitions()) {
 				constraint = new HashMap<Integer, Double>();
 				for (Place place : reducedPN.getPlaces()) {
 					if (!redundantPlaces.contains(place)) {
-						Arc arc = reducedPN.getArc(place, transition);
-						int weight = (arc == null ? 0 : arc.getWeight());
+						//Arc arc = reducedPN.getArc(place, transition);
+						int weight = ptWeights[pMap.get(place)][tMap.get(transition)]; //(arc == null ? 0 : arc.getWeight());
 						constraint.put(placeIndex.get(place), (place == candidatePlace ? 1.0 : -1.0) * weight);
 					}
 				}
@@ -113,14 +156,15 @@ public class BerthelotAlgorithm {
 			 * 
 			 * For all t in T: V(p).C(p,t) - Sum_{q in Q}{V(q).C(q,t) >= 0
 			 */
+			parameters.displayMessage("[BerthelotAlgorithm] Third constraint");
 			for (Transition transition : reducedPN.getTransitions()) {
 				constraint = new HashMap<Integer, Double>();
 				for (Place place : reducedPN.getPlaces()) {
 					if (!redundantPlaces.contains(place)) {
-						Arc arc = reducedPN.getArc(transition, place);
-						int weight = (arc == null ? 0 : arc.getWeight());
-						arc = reducedPN.getArc(place, transition);
-						weight -= (arc == null ? 0 : arc.getWeight());
+						//Arc arc = reducedPN.getArc(transition, place);
+						int weight = tpWeights[tMap.get(transition)][pMap.get(place)]; //(arc == null ? 0 : arc.getWeight());
+						//arc = reducedPN.getArc(place, transition);
+						weight -= ptWeights[pMap.get(place)][tMap.get(transition)]; //(arc == null ? 0 : arc.getWeight());
 						constraint.put(placeIndex.get(place), (place == candidatePlace ? 1.0 : -1.0) * weight);
 					}
 				}
@@ -131,6 +175,7 @@ public class BerthelotAlgorithm {
 			 * Places cannot have a non-negative solution, and candidatePlace
 			 * should have a positive solution.
 			 */
+			parameters.displayMessage("[BerthelotAlgorithm] Fourth constraint");
 			for (Place place : reducedPN.getPlaces()) {
 				if (!redundantPlaces.contains(place)) {
 					constraint = new HashMap<Integer, Double>();
@@ -151,6 +196,7 @@ public class BerthelotAlgorithm {
 
 			//			engine.print();
 
+			parameters.displayMessage("[BerthelotAlgorithm] Solve");
 			if (engine.isFeasible()) {
 				/*
 				 * Found a solution: candidatePlace is structurally redundant.
@@ -159,6 +205,7 @@ public class BerthelotAlgorithm {
 				redundantPlaces.add(candidatePlace);
 			}
 		}
+		parameters.displayMessage("[BerthelotAlgorithm] Done");
 		/*
 		 * Now remove all redundant places from the net.
 		 */
@@ -221,11 +268,11 @@ public class BerthelotAlgorithm {
 			if (edge instanceof Arc) {
 				Arc arc = (Arc) edge;
 				if (placeMap.containsKey(arc.getSource())) {
-					clonedNet
-							.addArc(placeMap.get(arc.getSource()), transitionMap.get(arc.getTarget()), arc.getWeight());
+					clonedNet.addArc(placeMap.get(arc.getSource()), transitionMap.get(arc.getTarget()),
+							arc.getWeight());
 				} else {
-					clonedNet
-							.addArc(transitionMap.get(arc.getSource()), placeMap.get(arc.getTarget()), arc.getWeight());
+					clonedNet.addArc(transitionMap.get(arc.getSource()), placeMap.get(arc.getTarget()),
+							arc.getWeight());
 				}
 			}
 		}
@@ -247,13 +294,13 @@ public class BerthelotAlgorithm {
 		}
 		return appliedMarkings;
 	}
-	
+
 	private boolean fastCheckFails(Petrinet net, Place place) {
 		for (PetrinetEdge<?, ?> outEdge : net.getOutEdges(place)) {
 			if (outEdge instanceof Arc) {
 				Arc outArc = (Arc) outEdge;
 				if (net.getInEdges(outArc.getTarget()).size() == 1) {
-					for (PetrinetEdge<?,?> outOutEdge : net.getOutEdges(outArc.getTarget())) {
+					for (PetrinetEdge<?, ?> outOutEdge : net.getOutEdges(outArc.getTarget())) {
 						if (outOutEdge instanceof Arc) {
 							Arc outOutArc = (Arc) outOutEdge;
 							if (!outOutArc.getTarget().equals(place)) {
@@ -268,7 +315,7 @@ public class BerthelotAlgorithm {
 			if (inEdge instanceof Arc) {
 				Arc inArc = (Arc) inEdge;
 				if (net.getInEdges(inArc.getSource()).size() == 1) {
-					for (PetrinetEdge<?,?> inInEdge : net.getInEdges(inArc.getSource())) {
+					for (PetrinetEdge<?, ?> inInEdge : net.getInEdges(inArc.getSource())) {
 						if (inInEdge instanceof Arc) {
 							Arc inInArc = (Arc) inInEdge;
 							if (!inInArc.getSource().equals(place)) {

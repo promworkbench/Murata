@@ -121,10 +121,24 @@ public class MurataFPT extends MurataRule {
 				if (equal) {
 					/*
 					 * Found a sibling with identical inputs and outputs. Remove
-					 * either the sibling or the transition.
+					 * either the sibling or the transition, if allowed.
 					 */
+					if (!parameters.isAllowFPTSacredNode()) {
+						/*
+						 * Check whether a sacred nodes is involved.
+						 */
+						if (sacredNodes.contains(siblingTransition) || sacredNodes.contains(transition)) {
+							/*
+							 * Yes, it is. Not allowed. 
+							 */
+							continue;
+						}
+						/*
+						 * No, it is not. Proceed to remove one.
+						 */
+					}
 					if (!sacredNodes.contains(siblingTransition)) {
-						if (parameters.isAllowFPTSacredNode() || !sacredNodes.contains(transition)) {
+						if (!sacredNodes.contains(transition)) {
 							String log = "<fpt siblingTransition=\"" + siblingTransition.getLabel() + "\"/>";
 							/*
 							 * The sibling is not sacred. Remove it. First,

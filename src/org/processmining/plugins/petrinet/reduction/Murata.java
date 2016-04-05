@@ -67,6 +67,26 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
+	@Plugin(name = "Reduce Silent Transitions, Preserve Soundness", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
+			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
+	public Object[] runPreserveBehavior(final PluginContext context, final Petrinet net, final Marking marking)
+			throws ConnectionCannotBeObtained {
+		MurataParameters parameters = new MurataParameters();
+		parameters.setAllowFPTSacredNode(true);
+		return run(context, net, marking, parameters);
+	}
+
+	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
+	@Plugin(name = "Reduce Silent Transitions, Preserve Behavior", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
+			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
+	public Object[] runPreserveSoundness(final PluginContext context, final Petrinet net, final Marking marking)
+			throws ConnectionCannotBeObtained {
+		MurataParameters parameters = new MurataParameters();
+		parameters.setAllowFPTSacredNode(false);
+		return run(context, net, marking, parameters);
+	}
+
+	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Simplify For Replay", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
 			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking)

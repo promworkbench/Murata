@@ -78,7 +78,7 @@ public class Murata {
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Reduce Silent Transitions, Preserve Behavior", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
-			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
+			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXTPS)
 	public Object[] runPreserveSoundness(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
 		MurataParameters parameters = new MurataParameters();
@@ -88,7 +88,7 @@ public class Murata {
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Simplify For Replay", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
-			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
+			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXTPB)
 	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
 		return simplify(context, net, marking, new MurataParameters());

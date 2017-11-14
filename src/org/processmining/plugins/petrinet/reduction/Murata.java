@@ -51,6 +51,18 @@ public class Murata {
 		return run(context, net, marking, new MurataParameters());
 	}
 
+	/**
+	 * Variant that only takes the Petri net, and uses the framework to get to an initial marking.
+	 * Note that if the framework contains multiple initial markings for the Petri net, result may vary.
+	 */
+	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
+	@PluginVariant(variantLabel = "Default", requiredParameterLabels = { 0 })
+	public Object[] runWithoutMarking(final PluginContext context, final Petrinet net)
+			throws ConnectionCannotBeObtained {
+		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class, InitialMarkingConnection.MARKING, net);
+		return run(context, net, marking, new MurataParameters());
+	}
+
 	public Object[] run(final PluginContext context, final Petrinet net, final Marking marking,
 			MurataParameters parameters) throws ConnectionCannotBeObtained {
 		/*

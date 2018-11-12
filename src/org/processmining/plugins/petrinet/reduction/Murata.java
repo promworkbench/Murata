@@ -89,6 +89,15 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
+	@Plugin(name = "Reduce Silent Transitions, Preserve Soundness, Use Default Initial Marking", parameterLabels = { "Petri net" }, returnLabels = { "Petri net",
+			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXTPS)
+	public Object[] runPreserveSoundness(final PluginContext context, final Petrinet net)
+			throws ConnectionCannotBeObtained {
+		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class, InitialMarkingConnection.MARKING, net);
+		return runPreserveSoundness(context, net, marking);
+	}
+
+	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Reduce Silent Transitions, Preserve Behavior", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
 			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXTPB)
 	public Object[] runPreserveBehavior(final PluginContext context, final Petrinet net, final Marking marking)
@@ -99,10 +108,28 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
+	@Plugin(name = "Reduce Silent Transitions, Preserve Behavior, Use Default Initial Marking", parameterLabels = { "Petri net" }, returnLabels = { "Petri net",
+			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXTPB)
+	public Object[] runPreserveBehavior(final PluginContext context, final Petrinet net)
+			throws ConnectionCannotBeObtained {
+		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class, InitialMarkingConnection.MARKING, net);
+		return runPreserveBehavior(context, net, marking);
+	}
+
+	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Simplify For Replay", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
 			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Object[] simplify(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
+		return simplify(context, net, marking, new MurataParameters());
+	}
+
+	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
+	@Plugin(name = "Simplify For Replay, Use Default Initial Marking", parameterLabels = { "Petri net" }, returnLabels = { "Petri net",
+			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
+	public Object[] simplify(final PluginContext context, final Petrinet net)
+			throws ConnectionCannotBeObtained {
+		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class, InitialMarkingConnection.MARKING, net);
 		return simplify(context, net, marking, new MurataParameters());
 	}
 

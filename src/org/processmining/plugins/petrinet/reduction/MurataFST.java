@@ -139,7 +139,8 @@ public class MurataFST extends MurataRule {
 				net.removeTransition(outputTransition);
 				return log; // Removed a place and a transition.
 			} else if (!sacredNodes.contains(inputTransition)
-					&& (outputTransition.isInvisible() || (net.getOutEdges(inputTransition).size() == 1))) {
+					&& (outputTransition.isInvisible() || (net.getOutEdges(inputTransition).size() == 1))
+					/*&& marking.occurrences(place) == 0*/) {
 				String log = "<fst inputTransition=\"" + inputTransition.getLabel() + "\" place=\"" + place.getLabel()
 						+ "\"/>";
 				/*
@@ -171,18 +172,18 @@ public class MurataFST extends MurataRule {
 					placeMap.remove(p);
 				}
 				/*
-				 * Transfer tokens from place to postset of output transition.
+				 * Transfer tokens from place to preset of input transition.
 				 */
-				postset = net.getOutEdges(outputTransition);
+				preset = net.getInEdges(inputTransition);
 				int tokens = marking.occurrences(place);
-				int outputFirings = tokens / weight;
+				int inputFirings = tokens / weight;
 				MurataUtils.resetPlace(marking, place);
-				for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> transferEdge : postset) {
+				for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> transferEdge : preset) {
 					if (transferEdge instanceof Arc) {
 						Arc transferArc = (Arc) transferEdge;
-						Place outputPlace = (Place) transferArc.getTarget();
-						marking.add(outputPlace, outputFirings * transferArc.getWeight());
-						MurataUtils.updateLabel(outputPlace, marking);
+						Place inputPlace = (Place) transferArc.getSource();
+						marking.add(inputPlace, inputFirings * transferArc.getWeight());
+						MurataUtils.updateLabel(inputPlace, marking);
 					}
 				}
 				/*

@@ -444,7 +444,7 @@ public class Murata {
 				/*
 				 * Add to the copy marking.
 				 */
-				copyMarking.add(placeMap.get(place), marking.occurrences(place));
+				copyMarking.add(placeMap.get(place), 1); // HV: adding marking.occurrences(place) was wrong here.
 			}
 		}
 		return copyMarking;

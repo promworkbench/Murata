@@ -3,6 +3,8 @@ package org.processmining.plugins.petrinet.reduction;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
@@ -33,9 +35,28 @@ public class MurataFST extends MurataRule {
 			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking) {
 		return reduce(net, sacredNodes, transitionMap, placeMap, marking, new MurataParameters());
 	}
-	
+
 	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
-			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking, MurataParameters parameters) {
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking,
+			MurataParameters parameters) {
+		Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+		Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+		for (PetrinetNode node : net.getNodes()) {
+			inputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+			outputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+		}
+		for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> edge : net.getEdges()) {
+			outputEdges.get(edge.getSource()).add(edge);
+			inputEdges.get(edge.getTarget()).add(edge);
+		}
+		return reduce(net, sacredNodes, transitionMap, placeMap, marking, inputEdges, outputEdges, parameters);
+	}
+
+	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking,
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges,
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges,
+			MurataParameters parameters) {
 		/*
 		 * Iterate over all places.
 		 */
@@ -50,7 +71,7 @@ public class MurataFST extends MurataRule {
 			 * Check the input arc. There should be only one and it should be
 			 * regular.
 			 */
-			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> preset = net.getInEdges(place);
+			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> preset = inputEdges.get(place);
 			if (preset.size() != 1) {
 				continue;
 			}
@@ -68,7 +89,7 @@ public class MurataFST extends MurataRule {
 			 * Check the output arc. There should be only one, it should be
 			 * regular, and its weight should be identical.
 			 */
-			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> postset = net.getOutEdges(place);
+			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> postset = outputEdges.get(place);
 			if (postset.size() != 1) {
 				continue;
 			}
@@ -84,7 +105,7 @@ public class MurataFST extends MurataRule {
 			 * Get the output transition. Should have only the place as input.
 			 */
 			Transition outputTransition = (Transition) outputArc.getTarget();
-			preset = net.getInEdges(outputTransition);
+			preset = inputEdges.get(outputTransition);
 			if (preset.size() != 1) {
 				continue;
 			}
@@ -97,8 +118,8 @@ public class MurataFST extends MurataRule {
 			 * Found a series transition. Remove if not sacred.
 			 */
 			if (!sacredNodes.contains(outputTransition)) {
-				String log = "<fst place=\"" + place.getLabel() + "\" outputTransition=\""
-						+ outputTransition.getLabel() + "\"/>";
+				String log = "<fst place=\"" + place.getLabel() + "\" outputTransition=\"" + outputTransition.getLabel()
+						+ "\"/>";
 				/*
 				 * Output transition not sacred. Remove it. First, update the
 				 * maps.
@@ -122,7 +143,7 @@ public class MurataFST extends MurataRule {
 				 * Also, transfer outgoing edges from output transition to input
 				 * transition.
 				 */
-				postset = net.getOutEdges(outputTransition);
+				postset = outputEdges.get(outputTransition);
 				int tokens = marking.occurrences(place);
 				int outputFirings = tokens / weight;
 				MurataUtils.resetPlace(marking, place);
@@ -139,8 +160,8 @@ public class MurataFST extends MurataRule {
 				net.removeTransition(outputTransition);
 				return log; // Removed a place and a transition.
 			} else if (!sacredNodes.contains(inputTransition)
-					&& (outputTransition.isInvisible() || (net.getOutEdges(inputTransition).size() == 1))
-					/*&& marking.occurrences(place) == 0*/) {
+					&& (outputTransition.isInvisible() || (outputEdges.get(inputTransition).size() == 1))
+			/* && marking.occurrences(place) == 0 */) {
 				String log = "<fst inputTransition=\"" + inputTransition.getLabel() + "\" place=\"" + place.getLabel()
 						+ "\"/>";
 				/*
@@ -174,7 +195,7 @@ public class MurataFST extends MurataRule {
 				/*
 				 * Transfer tokens from place to preset of input transition.
 				 */
-				preset = net.getInEdges(inputTransition);
+				preset = inputEdges.get(inputTransition);
 				int tokens = marking.occurrences(place);
 				int inputFirings = tokens / weight;
 				MurataUtils.resetPlace(marking, place);
@@ -190,7 +211,7 @@ public class MurataFST extends MurataRule {
 				 * Transfer incoming edges from the input transition to the
 				 * output transition.
 				 */
-				preset = net.getInEdges(inputTransition);
+				preset = inputEdges.get(inputTransition);
 				for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> transferEdge : preset) {
 					if (transferEdge instanceof Arc) {
 						Arc transferArc = (Arc) transferEdge;
@@ -201,7 +222,7 @@ public class MurataFST extends MurataRule {
 				 * Transfer outgoing edges from the input transition to the
 				 * output transition.
 				 */
-				postset = net.getOutEdges(inputTransition);
+				postset = outputEdges.get(inputTransition);
 				for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> transferEdge : postset) {
 					if (transferEdge instanceof Arc) {
 						Arc transferArc = (Arc) transferEdge;

@@ -3,6 +3,8 @@ package org.processmining.plugins.petrinet.reduction;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
@@ -21,6 +23,25 @@ public class MurataESP extends MurataRule {
 	
 	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
 			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking, MurataParameters parameters) {
+		Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+		Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+		for (PetrinetNode node : net.getNodes()) {
+			inputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+			outputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+		}
+		for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> edge : net.getEdges()) {
+			outputEdges.get(edge.getSource()).add(edge);
+			inputEdges.get(edge.getTarget()).add(edge);
+		}
+		return reduce(net, sacredNodes, transitionMap, placeMap, marking, inputEdges, outputEdges, new MurataParameters());
+	}
+	
+	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking, 
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges,
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges,
+			MurataParameters parameters) {
+
 		/*
 		 * Iterate over all places.
 		 */
@@ -32,7 +53,7 @@ public class MurataESP extends MurataRule {
 			/*
 			 * Check input arc.
 			 */
-			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> preset = net.getInEdges(place);
+			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> preset = inputEdges.get(place);
 			if (preset.size() != 1) {
 				continue;
 			}
@@ -45,7 +66,7 @@ public class MurataESP extends MurataRule {
 			/*
 			 * Check output arc.
 			 */
-			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> postset = net.getOutEdges(place);
+			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> postset = outputEdges.get(place);
 			if (postset.size() != 1) {
 				continue;
 			}

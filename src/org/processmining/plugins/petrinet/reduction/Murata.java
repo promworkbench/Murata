@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -52,14 +54,16 @@ public class Murata {
 	}
 
 	/**
-	 * Variant that only takes the Petri net, and uses the framework to get to an initial marking.
-	 * Note that if the framework contains multiple initial markings for the Petri net, result may vary.
+	 * Variant that only takes the Petri net, and uses the framework to get to
+	 * an initial marking. Note that if the framework contains multiple initial
+	 * markings for the Petri net, result may vary.
 	 */
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@PluginVariant(variantLabel = "Default", requiredParameterLabels = { 0 })
 	public Object[] runWithoutMarking(final PluginContext context, final Petrinet net)
 			throws ConnectionCannotBeObtained {
-		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class, InitialMarkingConnection.MARKING, net);
+		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class,
+				InitialMarkingConnection.MARKING, net);
 		return run(context, net, marking, new MurataParameters());
 	}
 
@@ -79,8 +83,9 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Reduce Silent Transitions, Preserve Soundness", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
-			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXTPS)
+	@Plugin(name = "Reduce Silent Transitions, Preserve Soundness", parameterLabels = { "Petri net",
+			"Marking" }, returnLabels = { "Petri net", "Marking" }, returnTypes = { Petrinet.class,
+					Marking.class }, userAccessible = true, help = MurataHelp.TEXTPS)
 	public Object[] runPreserveSoundness(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
 		MurataParameters parameters = new MurataParameters();
@@ -89,17 +94,20 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Reduce Silent Transitions, Preserve Soundness, Use Default Initial Marking", parameterLabels = { "Petri net" }, returnLabels = { "Petri net",
-			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXTPS)
+	@Plugin(name = "Reduce Silent Transitions, Preserve Soundness, Use Default Initial Marking", parameterLabels = {
+			"Petri net" }, returnLabels = { "Petri net", "Marking" }, returnTypes = { Petrinet.class,
+					Marking.class }, userAccessible = true, help = MurataHelp.TEXTPS)
 	public Object[] runPreserveSoundness(final PluginContext context, final Petrinet net)
 			throws ConnectionCannotBeObtained {
-		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class, InitialMarkingConnection.MARKING, net);
+		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class,
+				InitialMarkingConnection.MARKING, net);
 		return runPreserveSoundness(context, net, marking);
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Reduce Silent Transitions, Preserve Behavior", parameterLabels = { "Petri net", "Marking" }, returnLabels = { "Petri net",
-			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXTPB)
+	@Plugin(name = "Reduce Silent Transitions, Preserve Behavior", parameterLabels = { "Petri net",
+			"Marking" }, returnLabels = { "Petri net", "Marking" }, returnTypes = { Petrinet.class,
+					Marking.class }, userAccessible = true, help = MurataHelp.TEXTPB)
 	public Object[] runPreserveBehavior(final PluginContext context, final Petrinet net, final Marking marking)
 			throws ConnectionCannotBeObtained {
 		MurataParameters parameters = new MurataParameters();
@@ -108,11 +116,13 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Reduce Silent Transitions, Preserve Behavior, Use Default Initial Marking", parameterLabels = { "Petri net" }, returnLabels = { "Petri net",
-			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXTPB)
+	@Plugin(name = "Reduce Silent Transitions, Preserve Behavior, Use Default Initial Marking", parameterLabels = {
+			"Petri net" }, returnLabels = { "Petri net", "Marking" }, returnTypes = { Petrinet.class,
+					Marking.class }, userAccessible = true, help = MurataHelp.TEXTPB)
 	public Object[] runPreserveBehavior(final PluginContext context, final Petrinet net)
 			throws ConnectionCannotBeObtained {
-		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class, InitialMarkingConnection.MARKING, net);
+		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class,
+				InitialMarkingConnection.MARKING, net);
 		return runPreserveBehavior(context, net, marking);
 	}
 
@@ -125,11 +135,12 @@ public class Murata {
 	}
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
-	@Plugin(name = "Simplify For Replay, Use Default Initial Marking", parameterLabels = { "Petri net" }, returnLabels = { "Petri net",
-			"Marking" }, returnTypes = { Petrinet.class, Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
-	public Object[] simplify(final PluginContext context, final Petrinet net)
-			throws ConnectionCannotBeObtained {
-		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class, InitialMarkingConnection.MARKING, net);
+	@Plugin(name = "Simplify For Replay, Use Default Initial Marking", parameterLabels = {
+			"Petri net" }, returnLabels = { "Petri net", "Marking" }, returnTypes = { Petrinet.class,
+					Marking.class }, userAccessible = true, help = MurataHelp.TEXT)
+	public Object[] simplify(final PluginContext context, final Petrinet net) throws ConnectionCannotBeObtained {
+		Marking marking = context.tryToFindOrConstructFirstObject(Marking.class, InitialMarkingConnection.class,
+				InitialMarkingConnection.MARKING, net);
 		return simplify(context, net, marking, new MurataParameters());
 	}
 
@@ -152,8 +163,8 @@ public class Murata {
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Reduce All Transitions", level = PluginLevel.PeerReviewed, parameterLabels = {
-			"Petri net" }, returnLabels = { "Petri net" }, returnTypes = {
-					Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
+			"Petri net" }, returnLabels = {
+					"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Petrinet run(final PluginContext context, final Petrinet net) throws ConnectionCannotBeObtained {
 		return run(context, net, new MurataParameters());
 	}
@@ -167,8 +178,8 @@ public class Murata {
 
 	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "H.M.W Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "Murata")
 	@Plugin(name = "Reduce All Transitions, Retain Sink/Source Places", level = PluginLevel.PeerReviewed, parameterLabels = {
-			"Petri net" }, returnLabels = { "Petri net" }, returnTypes = {
-					Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
+			"Petri net" }, returnLabels = {
+					"Petri net" }, returnTypes = { Petrinet.class }, userAccessible = true, help = MurataHelp.TEXT)
 	public Petrinet runWF(final PluginContext context, final Petrinet net) throws ConnectionCannotBeObtained {
 		return runWF(context, net, new MurataParameters());
 	}
@@ -299,9 +310,21 @@ public class Murata {
 		String log;
 		do {
 			log = null;
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+			for (PetrinetNode node : net.getNodes()) {
+				inputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+				outputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+			}
+			for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> edge : net.getEdges()) {
+				outputEdges.get(edge.getSource()).add(edge);
+				inputEdges.get(edge.getTarget()).add(edge);
+			}
+
 			for (MurataRule reductionRule : reductionRules) {
 				if (log == null) {
-					log = reductionRule.reduce(net, sacredNodes, transitionMap, placeMap, marking, parameters);
+					log = reductionRule.reduce(net, sacredNodes, transitionMap, placeMap, marking, inputEdges,
+							outputEdges, parameters);
 				}
 			}
 			if (log != null) {
@@ -310,6 +333,7 @@ public class Murata {
 				 * removed.
 				 */
 				int newSize = net.getPlaces().size() + net.getTransitions().size();
+				System.out.println("[Murata] new net size: " + newSize);
 				while (size > newSize) {
 					if (context != null) {
 						context.getProgress().inc();

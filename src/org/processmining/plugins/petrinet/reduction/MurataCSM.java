@@ -23,6 +23,24 @@ public class MurataCSM extends MurataRule {
 	
 	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
 			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking, MurataParameters parameters) {
+		Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+		Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+		for (PetrinetNode node : net.getNodes()) {
+			inputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+			outputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+		}
+		for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> edge : net.getEdges()) {
+			outputEdges.get(edge.getSource()).add(edge);
+			inputEdges.get(edge.getTarget()).add(edge);
+		}
+		return reduce(net, sacredNodes, transitionMap, placeMap, marking, inputEdges, outputEdges, new MurataParameters());
+	}
+	
+	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking, 
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges,
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges,
+			MurataParameters parameters) {
 		for (Place place : net.getPlaces()) {
 			Set<Place> places = new HashSet<Place>();
 			Set<Transition> transitions = new HashSet<Transition>();
@@ -30,7 +48,7 @@ public class MurataCSM extends MurataRule {
 				continue;
 			}
 			String result = reduce(net, sacredNodes, transitionMap, placeMap, marking, place, place, places,
-					transitions);
+					transitions, inputEdges, outputEdges);
 			if (result != null) {
 				return result;
 			}
@@ -40,8 +58,10 @@ public class MurataCSM extends MurataRule {
 
 	private String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
 			Map<Transition, Transition> transitionMap, Map<Place, Place> placeMap, Marking marking,
-			Place firstPlace, Place lastPlace, Set<Place> places, Set<Transition> transitions) {
-		Collection<PetrinetEdge<?, ?>> edges = net.getOutEdges(lastPlace);
+			Place firstPlace, Place lastPlace, Set<Place> places, Set<Transition> transitions,
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges,
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges) {
+		Collection<PetrinetEdge<?, ?>> edges = outputEdges.get(lastPlace);
 		for (PetrinetEdge<?, ?> edge : edges) {
 			if (!(edge instanceof Arc)) {
 				continue;
@@ -56,13 +76,13 @@ public class MurataCSM extends MurataRule {
 			if (sacredNodes.contains(transition)) {
 				continue;
 			}
-			if (net.getInEdges(transition).size() != 1) {
+			if (inputEdges.get(transition).size() != 1) {
 				continue;
 			}
-			if (net.getOutEdges(transition).size() != 1) {
+			if (outputEdges.get(transition).size() != 1) {
 				continue;
 			}
-			PetrinetEdge<?, ?> otherEdge = net.getOutEdges(transition).iterator().next();
+			PetrinetEdge<?, ?> otherEdge = outputEdges.get(transition).iterator().next();
 			if (!(otherEdge instanceof Arc)) {
 				continue;
 			}
@@ -81,7 +101,7 @@ public class MurataCSM extends MurataRule {
 			places.add(otherPlace);
 			transitions.add(transition);
 			String result = reduce(net, sacredNodes, transitionMap, placeMap, marking, firstPlace, otherPlace, places,
-					transitions);
+					transitions, inputEdges, outputEdges);
 			transitions.remove(transition);
 			places.remove(otherPlace);
 			if (result != null) {

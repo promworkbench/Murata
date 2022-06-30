@@ -3,6 +3,8 @@ package org.processmining.plugins.petrinet.reduction;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetEdge;
@@ -18,9 +20,30 @@ public class MurataFSP extends MurataRule {
 			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking) {
 		return reduce(net, sacredNodes, transitionMap, placeMap, marking, new MurataParameters());
 	}
-	
+
 	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
-			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking, MurataParameters parameters) {
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking,
+			MurataParameters parameters) {
+		Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+		Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges = new HashMap<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>>();
+		for (PetrinetNode node : net.getNodes()) {
+			inputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+			outputEdges.put(node, new HashSet<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>());
+		}
+		for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> edge : net.getEdges()) {
+			outputEdges.get(edge.getSource()).add(edge);
+			inputEdges.get(edge.getTarget()).add(edge);
+		}
+
+		return reduce(net, sacredNodes, transitionMap, placeMap, marking, inputEdges, outputEdges,
+				new MurataParameters());
+	}
+
+	public String reduce(Petrinet net, Collection<PetrinetNode> sacredNodes,
+			HashMap<Transition, Transition> transitionMap, HashMap<Place, Place> placeMap, Marking marking,
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> inputEdges,
+			Map<PetrinetNode, Set<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>>> outputEdges,
+			MurataParameters parameters) {
 		/*
 		 * Iterate over all transitions.
 		 */
@@ -32,8 +55,8 @@ public class MurataFSP extends MurataRule {
 			 * Check the input arc. There should be only one, it should be
 			 * regular, and it weight should be one.
 			 */
-			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> preset = net
-					.getInEdges(transition);
+			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> preset = inputEdges
+					.get(transition);
 			if (preset.size() != 1) {
 				continue;
 			}
@@ -49,8 +72,8 @@ public class MurataFSP extends MurataRule {
 			 * Get the input place. Should have only the place as output.
 			 */
 			Place inputPlace = (Place) inputArc.getSource();
-			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> postset = net
-					.getOutEdges(inputPlace);
+			Collection<PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode>> postset = outputEdges
+					.get(inputPlace);
 			if (postset.size() != 1) {
 				continue;
 			}
@@ -58,7 +81,7 @@ public class MurataFSP extends MurataRule {
 			 * Check the output arc. There should be only one, it should be
 			 * regular, and its weight should be one.
 			 */
-			postset = net.getOutEdges(transition);
+			postset = outputEdges.get(transition);
 			if (postset.size() != 1) {
 				continue;
 			}
@@ -115,7 +138,7 @@ public class MurataFSP extends MurataRule {
 				 * Also, transfer any input edge from the input place to the
 				 * output place.
 				 */
-				preset = net.getInEdges(inputPlace);
+				preset = inputEdges.get(inputPlace);
 				for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> transferEdge : preset) {
 					if (transferEdge instanceof Arc) {
 						Arc transferArc = (Arc) transferEdge;
@@ -158,14 +181,14 @@ public class MurataFSP extends MurataRule {
 				 * input place, and any output edge from the output place to the
 				 * input place.
 				 */
-				preset = net.getInEdges(outputPlace);
+				preset = inputEdges.get(outputPlace);
 				for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> transferEdge : preset) {
 					if (transferEdge instanceof Arc) {
 						Arc transferArc = (Arc) transferEdge;
 						MurataUtils.addArc(net, transferArc.getSource(), inputPlace, transferArc.getWeight());
 					}
 				}
-				postset = net.getOutEdges(outputPlace);
+				postset = outputEdges.get(outputPlace);
 				for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> transferEdge : postset) {
 					if (transferEdge instanceof Arc) {
 						Arc transferArc = (Arc) transferEdge;

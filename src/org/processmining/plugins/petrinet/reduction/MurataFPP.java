@@ -92,6 +92,33 @@ public class MurataFPP extends MurataRule {
 			HashSet<Arc> inputArcs = inputMap.get(place);
 			HashSet<Arc> outputArcs = outputMap.get(place);
 			/*
+			 * If place has inputs nor outputs, select all places as sibling places.
+			 */
+			Set<Place> siblingPlaces = inputMap.keySet();
+			if (!inputArcs.isEmpty()) {
+				/*
+				 * Place has an input. Select sibling places as those places that share this input.
+				 */
+				siblingPlaces = new HashSet<Place>();
+				Transition transition = (Transition) inputArcs.iterator().next().getSource();
+				for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> edge : outputEdges.get(transition)) {
+					if (edge instanceof Arc) {
+						siblingPlaces.add((Place) ((Arc) edge).getTarget());
+					}
+				}
+			} else if (outputArcs.isEmpty()) {
+				/*
+				 * Place has an output. Select sibling places as those places that share this output.
+				 */
+				siblingPlaces = new HashSet<Place>();
+				Transition transition = (Transition) outputArcs.iterator().next().getTarget();
+				for (PetrinetEdge<? extends PetrinetNode, ? extends PetrinetNode> edge : inputEdges.get(transition)) {
+					if (edge instanceof Arc) {
+						siblingPlaces.add((Place) ((Arc) edge).getSource());
+					}
+				}
+			}
+			/*
 			 * Checking for matching transitions.
 			 */
 			for (Place siblingPlace : inputMap.keySet()) {

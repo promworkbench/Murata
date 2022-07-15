@@ -106,7 +106,7 @@ public class MurataFPP extends MurataRule {
 						siblingPlaces.add((Place) ((Arc) edge).getTarget());
 					}
 				}
-			} else if (outputArcs.isEmpty()) {
+			} else if (!outputArcs.isEmpty()) {
 				/*
 				 * Place has an output. Select sibling places as those places that share this output.
 				 */

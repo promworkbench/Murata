@@ -107,7 +107,7 @@ public class MurataFPT extends MurataRule {
 						siblingTransitions.add((Transition) ((Arc) edge).getTarget());
 					}
 				}
-			} else if (outputArcs.isEmpty()) {
+			} else if (!outputArcs.isEmpty()) {
 				/*
 				 * Transition has an output. Select sibling transitions as those transitions that share this output.
 				 */

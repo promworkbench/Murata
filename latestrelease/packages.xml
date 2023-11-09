@@ -1,0 +1,11 @@
+
+					<packages>
+						<package name="Murata" version="6.14.1" os="all" url="Murata/Murata-6.14.1-all.zip" desc="Classical reduction rules for Petri nets" org="Eindhoven University of Technology" license="L-GPL" author="H.M.W. Verbeek" auto="false" hasPlugins="true" logo="Log/lib/images/prom_duck_300.png">
+				       <dependency org="prom" name="ProM-Plugins" rev="latest" changing="true" transitive="true" />
+       <dependency org="prom" name="BasicUtils" rev="latest" changing="true" transitive="true" />
+       <dependency org="prom" name="LPEngine" rev="latest" changing="true" transitive="true" />
+       <dependency org="prom" name="PetriNets" rev="latest" changing="true" transitive="true" />
+
+						</package>
+					</packages>
+				
